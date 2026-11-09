@@ -1,0 +1,57 @@
+name: Tarjim
+options:
+  bundleIdPrefix: com.elshiekhahmed
+  deploymentTarget:
+    iOS: "16.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1"
+    CODE_SIGNING_ALLOWED: "NO"
+    CODE_SIGNING_REQUIRED: "NO"
+    CODE_SIGN_IDENTITY: ""
+targets:
+  Tarjim:
+    type: application
+    platform: iOS
+    sources: [App, Shared]
+    dependencies:
+      - target: TarjimKeyboard
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.elshiekhahmed.tarjim
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_ENTITLEMENTS: App/Tarjim.entitlements
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: Tarjim
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        ITSAppUsesNonExemptEncryption: false
+  TarjimKeyboard:
+    type: app-extension
+    platform: iOS
+    sources: [Keyboard, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.elshiekhahmed.tarjim.keyboard
+        CODE_SIGN_ENTITLEMENTS: Keyboard/Keyboard.entitlements
+    info:
+      path: Keyboard/Info.plist
+      properties:
+        CFBundleDisplayName: Tarjim
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.keyboard-service
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).KeyboardViewController
+          NSExtensionAttributes:
+            IsASCIICapable: false
+            PrefersRightToLeft: false
+            PrimaryLanguage: en-US
+            RequestsOpenAccess: true

@@ -1,0 +1,63 @@
+name: Build IPA
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build (unsigned)
+        run: |
+          xcodebuild -version
+          xcodebuild \
+            -project Tarjim.xcodeproj \
+            -target Tarjim \
+            -configuration Release \
+            -sdk iphoneos \
+            SYMROOT="$PWD/build" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build | xcbeautify || exit ${PIPESTATUS[0]}
+
+      - name: Ad-hoc sign with entitlements and package IPA
+        run: |
+          APP="build/Release-iphoneos/Tarjim.app"
+          test -d "$APP/PlugIns/TarjimKeyboard.appex"
+          # Embed entitlements (App Group) so sideloading tools can re-sign with them.
+          codesign -f -s - --entitlements Keyboard/Keyboard.entitlements "$APP/PlugIns/TarjimKeyboard.appex"
+          codesign -f -s - --entitlements App/Tarjim.entitlements "$APP"
+          mkdir -p dist/Payload
+          cp -R "$APP" dist/Payload/
+          (cd dist && zip -qry Tarjim.ipa Payload)
+          ls -la dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Tarjim-ipa
+          path: dist/Tarjim.ipa
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/Tarjim.ipa \
+            --title "Tarjim $GITHUB_REF_NAME" \
+            --notes "Unsigned IPA for sideloading (Sideloadly / AltStore). See README for setup."

@@ -156,6 +156,46 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("Tarjim ترجم")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Link(destination: BugReport.url) {
+                        Image(systemName: "ladybug")
+                    }
+                    .accessibilityLabel("Report a bug")
+                }
+            }
         }
+    }
+}
+
+enum BugReport {
+    static let repo = "elshiekh-ahmed/Tarjim"
+
+    static var environment: String {
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = info?["CFBundleVersion"] as? String ?? "?"
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machine = withUnsafeBytes(of: &systemInfo.machine) { raw in
+            String(decoding: raw.prefix(while: { $0 != 0 }), as: UTF8.self)
+        }
+        let device = UIDevice.current
+        return """
+        App: Tarjim \(version) (\(build))
+        iOS: \(device.systemName) \(device.systemVersion)
+        Device: \(machine)
+        Model: \(SharedSettings.shared.model)
+        Reply script: \(SharedSettings.shared.script.rawValue)
+        """
+    }
+
+    static var url: URL {
+        var components = URLComponents(string: "https://github.com/\(repo)/issues/new")!
+        components.queryItems = [
+            URLQueryItem(name: "template", value: "bug_report.yml"),
+            URLQueryItem(name: "environment", value: environment),
+        ]
+        return components.url!
     }
 }

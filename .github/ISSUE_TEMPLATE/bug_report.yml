@@ -1,0 +1,41 @@
+name: Bug report
+description: Something in Tarjim isn't working right
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the problem. Screenshots or screen recordings help a lot (drag them in here).
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open Messages and switch to the Tarjim keyboard
+        2. Type "..."
+        3. Tap Insert Arabic
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where?
+      options:
+        - Keyboard – reading (Read copied)
+        - Keyboard – replying (preview / Insert Arabic)
+        - Keyboard – typing / layout
+        - Translation quality
+        - Tarjim app / setup
+        - Other
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Filled in automatically when you use the 🐞 button in the app.
+      render: text

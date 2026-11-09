@@ -29,6 +29,10 @@ If the keyboard says there's no API key even though you added it in the app, you
 - **Reply script:** Arabic script (default) or Arabizi (Latin letters such as `3`, `7`).
 - **Model:** defaults to `gemini-flash-latest`. If that model isn't available, Tarjim tries `gemini-3.5-flash-lite` and then `gemini-2.5-flash`.
 
+## Reporting bugs
+
+Tap the 🐞 button in the top-right of the Tarjim app. It opens a [bug report](../../issues/new?template=bug_report.yml) with your app version, iOS version and device already filled in.
+
 ## Privacy
 
 The text you translate is sent to Google's Gemini API. On the free tier, Google may use this data to improve its products. Your API key is stored only on your device.
